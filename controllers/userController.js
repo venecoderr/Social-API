@@ -1,4 +1,4 @@
-import { User } from '../models/index.js';
+import { User, Thought } from '../models/index.js';
 
 // Get all Users
 export async function getUsers(req, res) {
@@ -41,6 +41,27 @@ export async function createUser(req, res) {
   }
 }
 
+
+// Updates a user
+export async function editUser(req, res) {
+  try {
+    const update = req.body
+    const user = await User.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: update },
+      { runValidators: true, new: true }
+    );
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: 'No user found with that ID :(' });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json(err.message);
+  }
+}
+
 // Delete a user and remove them from the course
 export async function deleteUser(req, res) {
   try {
@@ -49,6 +70,9 @@ export async function deleteUser(req, res) {
     if (!user) {
       return res.status(404).json({ message: 'No such user exists' });
     }
+
+    await Thought.deleteMany({username: user._id})
+
 
     res.status(200).json({ message: 'user successfully deleted' });
   } catch (err) {
