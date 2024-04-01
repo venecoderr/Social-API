@@ -47,7 +47,7 @@ export async function createThought(req, res) {
   }
 }
 
-// Updates a user
+// Updates a thought
 export async function editThought(req, res) {
   try {
     const update = req.body
@@ -106,7 +106,7 @@ export async function addReaction(req, res) {
   }
 }
 
-// Remove reaction from a Thought
+// Remove reaction from a thought
 export async function removeReaction(req, res) {
   try {
     const thought = await Thought.findOneAndUpdate(

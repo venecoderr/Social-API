@@ -3,7 +3,7 @@ import { User, Thought } from '../models/index.js';
 // Get all Users
 export async function getUsers(req, res) {
   try {
-    const users = await User.find();
+    const users = await User.find().populate('friends', 'username').populate('thoughts', 'thoughtBody');
 
     if(!users) {
       return res.status(404).json({ message: 'No users found' })
@@ -19,7 +19,7 @@ export async function getUsers(req, res) {
 // Get a single user
 export async function getUserbyId(req, res) {
   try {
-    const user = await User.findOne({ _id: req.params.id })
+    const user = await User.findOne({ _id: req.params.id }).populate('friends', 'username')
       .select('-__v');
     if (!user) {
       return res.status(404).json({ message: 'No user with that ID' })
@@ -62,7 +62,7 @@ export async function editUser(req, res) {
   }
 }
 
-// Delete a user and remove them from the course
+// Deletes a user and it's thoughts
 export async function deleteUser(req, res) {
   try {
     const user = await User.findOneAndRemove({ _id: req.params.id });
@@ -81,7 +81,7 @@ export async function deleteUser(req, res) {
   }
 }
 
-// // Add an assignment to a user
+// Adds friend to user
 export async function addFriend(req, res) {
   try {
     const newFriend = req.body.id
@@ -101,7 +101,7 @@ export async function addFriend(req, res) {
   }
 }
 
-// // Remove assignment from a user
+// Remove friend from a user
 export async function removeFriend(req, res) {
   try {
     const user = await User.findOneAndUpdate(
